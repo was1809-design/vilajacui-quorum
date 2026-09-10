@@ -1,0 +1,13 @@
+/* Gradual iOS-inspired polish — preserves the existing Quórum navigation */
+:root{--ios-bg:#f2f2f7;--ios-card:#fff;--ios-sep:rgba(60,60,67,.16);--ios-secondary:#6e6e73;--ios-radius:16px}
+html{background:var(--ios-bg)}
+body{background:var(--ios-bg);-webkit-tap-highlight-color:transparent}
+.shell{max-width:980px;padding-top:max(16px,env(safe-area-inset-top));padding-bottom:calc(40px + env(safe-area-inset-bottom))}
+.top{padding:8px 4px 18px}.top h1{font-size:31px;letter-spacing:-.035em}.eyebrow{letter-spacing:.055em}.avatar{box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.nav{gap:2px;margin:0 -4px 20px;padding:0 4px 2px;border-bottom:.5px solid var(--ios-sep);scrollbar-width:none}.nav::-webkit-scrollbar{display:none}.nav button{min-height:44px;padding:11px 12px;border-radius:10px 10px 0 0}.nav button.on{background:rgba(15,107,104,.07);border-bottom:2px solid var(--teal)}
+.section,.qvHomeSection,.qvBlock{background:var(--ios-card);border:0!important;border-radius:var(--ios-radius)!important;box-shadow:0 .5px 0 rgba(0,0,0,.06);overflow:hidden}.sectionHead{padding:18px 18px 13px}.sectionHead h2{font-size:21px;letter-spacing:-.015em}.sectionBody{padding:0 18px 18px}.item{border-top:.5px solid var(--ios-sep)}
+.hero{border-radius:20px;padding:22px;margin-bottom:16px}.hero h2{letter-spacing:-.025em}.metrics{border:0;border-radius:16px;overflow:hidden;box-shadow:0 .5px 0 rgba(0,0,0,.06)}.metrics div{border-color:var(--ios-sep)!important}.metrics span{font-size:11px}
+input,textarea,select{min-height:44px;border:1px solid rgba(60,60,67,.18);border-radius:11px;background:#fff}.primary{min-height:46px;border-radius:12px}.mini{min-height:40px;border-radius:10px}.scheduleToggle{min-height:58px}.inlinePlan{border-left:0;border-radius:14px;background:#f7f8f8}.periodBar{background:transparent!important;border-bottom:.5px solid var(--ios-sep)!important}
+.qvNow{border-radius:20px}.qvWelcome h2{letter-spacing:-.04em}
+@media(max-width:650px){.shell{padding-left:12px;padding-right:12px}.top h1{font-size:29px}.nav{margin-left:-12px;margin-right:-12px;padding-left:12px;padding-right:12px}.section{border-radius:15px!important}.hero{border-radius:18px}.inlinePlan{margin-left:0;margin-right:0}}
+@media(prefers-color-scheme:dark){:root{--ios-bg:#000;--ios-card:#1c1c1e;--ios-sep:rgba(84,84,88,.65);--ios-secondary:#98989d}html,body{background:#000;color:#f5f5f7}.section,.qvHomeSection,.qvBlock,.scheduleToggle,.metrics{background:#1c1c1e;color:#f5f5f7}.inlinePlan,.periodBar{background:#1c1c1e!important}.item,.nav{border-color:var(--ios-sep)}input,textarea,select{background:#2c2c2e;color:#fff;border-color:#3a3a3c}.mut,small{color:#98989d}.nav button{color:#98989d}.nav button.on{color:#62c5c0;background:rgba(15,107,104,.2)}}
