@@ -18,6 +18,7 @@ const DISTRICTS=[
   {id:'d3c4',ministers:['Nathan Ferreira Martins','Reynan Vitor Santos do Nascimento'],families:['Augusto Henrique Arcanjo Teles','Henry Oscar Calderón Garcia & Yublithze Yurmailin','Cherry Wilmer Machado Carreño'],seed:['Nathan Ferreira Martins','Reynan Vitor Santos do Nascimento']}
  ]}
 ];
+window.MINISTERING_DISTRICTS=DISTRICTS;
 function initM(){if(!state.ministeringV2||typeof state.ministeringV2!=='object')state.ministeringV2={interviews:[],families:{},seeded:false};let m=state.ministeringV2;m.interviews=Array.isArray(m.interviews)?m.interviews:[];m.families=m.families&&typeof m.families==='object'?m.families:{};if(!m.seeded){DISTRICTS.forEach(d=>d.companionships.forEach(c=>{if(c.seed?.length)m.interviews.push({id:'seed-'+c.id,date:c.seedJuly?'2026-07-01':'2026-08-01',districtId:d.id,companionshipId:c.id,participants:c.seed,interviewer:d.leader,notes:'Entrevista registrada anteriormente.',familySnapshots:[],seed:true})}));m.seeded=true}}
 const h=s=>esc(s), today=()=>new Date().toISOString().slice(0,10);
 function latest(c){return state.ministeringV2.interviews.filter(x=>x.companionshipId===c.id).sort((a,b)=>String(b.date).localeCompare(String(a.date)))[0]}
