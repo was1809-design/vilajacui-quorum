@@ -2,13 +2,16 @@
 const E=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const C=s=>String(s??'').trim();
 const D=s=>window.dateBR?dateBR(s):s;
-function activeBrothers(){
-  const src=Array.isArray(state?.members)?state.members:[];
-  return [...new Set(src.filter(m=>m&&m.active===true&&m.name).map(m=>m.name))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
-}
-function brotherOptions(selected=''){
-  const names=activeBrothers();
-  return '<option value="">Selecione o irmão</option>'+names.map(n=>`<option value="${E(n)}" ${n===selected?'selected':''}>${E(n)}</option>`).join('');
+function memberName(m){return typeof m==='string'?C(m):C(m?.name||m?.nome||m?.member||m?.fullName)}
+function isActive(m){if(typeof m==='string')return true;if(m?.active===false||m?.ativo===false)return false;const s=C(m?.status||m?.situacao).toLowerCase();return !['inativo','inactive','false','0'].includes(s)}
+function brotherNames(){
+  const names=[];
+  const add=m=>{const n=memberName(m);if(n&&isActive(m))names.push(n)};
+  (Array.isArray(state?.members)?state.members:[]).forEach(add);
+  if(!names.length){
+    document.querySelectorAll('.brother').forEach(row=>{if(!/inativo/i.test(row.textContent||'')){const n=C(row.querySelector('b')?.textContent);if(n)names.push(n)}});
+  }
+  return [...new Set(names)].sort((a,b)=>a.localeCompare(b,'pt-BR'));
 }
 function removeMeetingItemVisits(){
   if(currentTab!=='Presidência')return;
@@ -25,17 +28,22 @@ function removeMeetingItemVisits(){
 }
 function makeBrotherDropdowns(){
   if(currentTab!=='Presidência')return;
-  document.querySelectorAll('[id^="visit-member-"]').forEach(field=>{
-    const selected=field.value||'';
-    if(field.tagName!=='SELECT'){
-      const select=document.createElement('select');select.id=field.id;field.replaceWith(select);field=select;
+  const names=brotherNames();
+  document.querySelectorAll('[id^="visit-member-"]').forEach(old=>{
+    const selected=C(old.value);
+    let field=old;
+    if(old.tagName!=='SELECT'){
+      field=document.createElement('select');
+      field.id=old.id;
+      field.name=old.name||'';
+      field.setAttribute('aria-label','Irmão');
+      old.replaceWith(field);
     }
-    const html=brotherOptions(selected);
-    if(field.innerHTML!==html)field.innerHTML=html;
-    if(selected&&activeBrothers().includes(selected))field.value=selected;
+    field.innerHTML='<option value="">Selecione o irmão</option>'+names.map(n=>`<option value="${E(n)}">${E(n)}</option>`).join('');
+    if(selected&&names.includes(selected))field.value=selected;
   });
 }
-function fix(){removeMeetingItemVisits();makeBrotherDropdowns()}
+function fix(){try{removeMeetingItemVisits();makeBrotherDropdowns()}catch(e){console.warn('visits presidency fix',e)}}
 function shareText(cycle){
   const m=(state.meetings||[]).find(x=>(x.sourceDate||x.date)===cycle)||{},items=window.qvMeetingItems||[],actions=items.filter(x=>x.meeting_cycle===cycle&&x.item_type==='action'),visits=Array.isArray(m.presidencyVisits)?m.presidencyVisits:[];
   const l=['*Ata — Reunião da Presidência do Quórum de Élderes*','Ala Vila Jacuí',`📅 ${D(m.date||cycle)}`];
@@ -47,6 +55,8 @@ function shareText(cycle){
   return l.join('\n');
 }
 document.addEventListener('click',async e=>{const b=e.target.closest('[data-meeting-share]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();const t=shareText(b.dataset.meetingShare);try{if(navigator.share)await navigator.share({title:'Ata da Presidência',text:t});else{await navigator.clipboard.writeText(t);b.textContent='Ata copiada ✓'}}catch(err){if(err?.name!=='AbortError')window.prompt('Copie a ata:',t)}},true);
-const old=window.renderTab;if(typeof old==='function')window.renderTab=function(){const r=old.apply(this,arguments);setTimeout(fix,180);return r};
-new MutationObserver(()=>requestAnimationFrame(fix)).observe(document.getElementById('view'),{childList:true,subtree:true});document.addEventListener('DOMContentLoaded',()=>setTimeout(fix,700));
+const oldRender=window.renderTab;if(typeof oldRender==='function')window.renderTab=function(){const r=oldRender.apply(this,arguments);setTimeout(fix,0);setTimeout(fix,120);return r};
+const root=document.getElementById('view');if(root)new MutationObserver(()=>requestAnimationFrame(fix)).observe(root,{childList:true,subtree:true});
+document.addEventListener('click',e=>{if(e.target.closest('[data-qv="visit-add"]'))setTimeout(fix,0)},true);
+document.addEventListener('DOMContentLoaded',()=>setTimeout(fix,300));
 })();
