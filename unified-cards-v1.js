@@ -16,14 +16,20 @@ const css=`
 html[data-theme=dark] #view .qvUC,html[data-theme=dark] #view .mcomp{background:#15201f!important;border-color:#30413e!important}
 @media(max-width:600px){#view .qvUC{border-radius:14px!important;margin:8px 0!important}#view .qvUC.item,#view .qvUC.brother{padding:12px!important}}
 `;
+function activeTab(){
+ const on=document.querySelector('#nav button.on');
+ return on?on.textContent.trim():'';
+}
 function mark(){try{
- const tab=window.currentTab;
+ const tab=activeTab();
  if(tab==='Aulas'||tab==='Presidência')document.querySelectorAll('#view .scheduleRow').forEach(x=>x.classList.add('qvUC'));
  if(tab==='Frequência')document.querySelectorAll('#view .sectionBody>.item').forEach(x=>x.classList.add('qvUC'));
  if(tab==='Irmãos')document.querySelectorAll('#view .item.brother').forEach(x=>x.classList.add('qvUC','qvUCBrother'));
  if(tab==='Recém-conversos')document.querySelectorAll('#view .sectionBody>.item').forEach(x=>x.classList.add('qvUC','qvUCConvert'));
  }catch(e){console.warn('unified cards skipped',e)}}
 const style=document.createElement('style');style.textContent=css;document.head.appendChild(style);
-const old=window.renderTab;if(typeof old==='function')window.renderTab=function(){const r=old.apply(this,arguments);requestAnimationFrame(mark);return r};
-document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(mark));
+const observer=new MutationObserver(()=>requestAnimationFrame(mark));
+function start(){const view=document.getElementById('view');if(view){observer.observe(view,{childList:true,subtree:true});mark()}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+document.addEventListener('click',e=>{if(e.target.closest('#nav button'))requestAnimationFrame(()=>requestAnimationFrame(mark))});
 })();
