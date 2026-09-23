@@ -5,9 +5,6 @@
     const obj={
       sourceDate:d,
       date:val(id+'-date'),
-      thought:val(id+'-thought').trim(),
-      openingPrayer:val(id+'-open').trim(),
-      closingPrayer:val(id+'-close').trim(),
       participantList:PRESIDENCY.filter((p,i)=>document.getElementById(id+'-p'+i)?.checked),
       agenda:val(id+'-agenda').trim()
     };
